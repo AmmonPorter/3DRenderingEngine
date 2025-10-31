@@ -3,10 +3,15 @@
 // This is the vertex position (x, y, z) coming in from your VBO
 layout (location = 0) in vec3 aPos;
 
+// These are the matrices we will get from our Python code
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+
 void main()
 {
-    // gl_Position is a special built-in variable.
-    // This is the final 2D position you are outputting.
-    // We just pass the 3D position through as a 4D point (w=1.0).
-    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
+    // This is the core formula of 3D graphics.
+    // It multiplies the vertex position by all the matrices
+    // to get the final position on the screen.
+    gl_Position = projection * view * model * vec4(aPos, 1.0);
 }

@@ -1,9 +1,9 @@
 import pygame
-from pygame.locals import * # Import all Pygame constants
+from pygame.locals import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
 import mesh
-# import Rendere  # We will create a new OpenGL-based renderer
+import openGLRenderer  # <-- Import the new renderer
 
 # --- Initialization ---
 pygame.init()
@@ -14,58 +14,42 @@ SCREEN_HEIGHT = 600
 screen_dimensions = (SCREEN_WIDTH, SCREEN_HEIGHT)
 
 # --- Create the OpenGL-enabled display ---
-# 1. Add the OPENGL and DOUBLEBUF flags
 flags = OPENGL | DOUBLEBUF
 screen = pygame.display.set_mode(screen_dimensions, flags)
-
-# Set the window title
 pygame.display.set_caption("3D Rendering with OpenGL")
 
 # --- NEW OPENGL SETUP ---
-# 2. Enable the depth buffer (Z-buffer)
-glEnable(GL_DEPTH_TEST)
+glEnable(GL_DEPTH_TEST) # Replaces your Z-sort (Painter's Algorithm)
+glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT) # Tell OpenGL the size of the window
 
-# 3. Set up the 3D perspective
-glMatrixMode(GL_PROJECTION)
-# field of view, aspect ratio, near clip plane, far clip plane
-gluPerspective(45, (SCREEN_WIDTH / SCREEN_HEIGHT), 0.1, 100.0) 
-
-# 4. Move the "camera" back so we can see
-glMatrixMode(GL_MODELVIEW)
-# Move 5 units back (out of the screen)
-glTranslate(0.0, 0.0, -5.0) 
-# --- END NEW OPENGL SETUP ---
-
-# --- Comment out the old renderer ---
-# Your old renderer class draws to the CPU (Pygame surface)
-# It cannot draw to an OpenGL context.
-# renderer = Rendere.Renderer(screen, SCREEN_WIDTH, SCREEN_HEIGHT, focal = 500)
+# --- Create the new Renderer ---
+# This will compile the shaders
+renderer = openGLRenderer.OpenGLRenderer(SCREEN_WIDTH, SCREEN_HEIGHT)
 
 # --- Main Game Loop ---
 running = True
 clock = pygame.time.Clock()
 
-# You can still load the mesh data, this is perfect
+# Load the mesh data (this is perfect, no changes)
 shape = mesh.mesh("bulb.stl")
 
-def drawScene():
-    # 5. Clear the screen (Color and Depth buffers)
-    # This replaces 'screen.fill(WHITE)'
+# --- UPLOAD MESH TO GPU (ONE-TIME) ---
+renderer.upload_mesh(shape)
+
+def drawScene(mesh_obj):
+    # Clear the screen (Color and Depth buffers)
+    glClearColor(0.1, 0.1, 0.1, 1.0) # A dark grey background
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     
-    # --- Your new OpenGL drawing code will go here ---
-    # (e.g., bind shaders, set uniforms, draw VBO)
-    
-    # --- Old code commented out ---
-    # renderer.drawCube(screen, shape,wire=True)
+    # --- Tell the new renderer to draw ---
+    renderer.draw(mesh_obj)
 
 def inputSystem(mesh):
+    # --- NO CHANGES NEEDED ---
+    # This code is perfect. It modifies the 'shape'
+    # object's properties on the CPU. The renderer
+    # will read these properties each frame.
     keys = pygame.key.get_pressed()
-    
-    # This input system is 100% perfect and does not need to change.
-    # It modifies the 'shape' object's properties in Python.
-    # Our new renderer will read these values (shape.rotation, etc.)
-    # and send them to the GPU.
     
     if keys[pygame.K_w]:
         mesh.position[2] += 0.1
@@ -100,9 +84,8 @@ while running:
             running = False
 
     inputSystem(shape)
-    drawScene()
+    drawScene(shape) # Pass the shape to the draw function
 
-    # 6. 'flip' now swaps the hidden OpenGL buffer with the visible one
     pygame.display.flip()
     clock.tick(60)
 
