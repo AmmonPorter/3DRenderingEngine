@@ -13,7 +13,7 @@ def normalize(v):
     
     # --- THIS IS THE BUG ---
     # You MUST check if length is near zero
-    if length < 0.001:
+    if length < 0.00001:
         return (0, 0, 0) # Return a VALID vector
     
     return (x / length, y / length, z / length)

@@ -1,121 +1,108 @@
 import pygame
+from pygame.locals import * # Import all Pygame constants
+from OpenGL.GL import *
+from OpenGL.GLU import *
 import mesh
-import Rendere
-
+# import Rendere  # We will create a new OpenGL-based renderer
 
 # --- Initialization ---
 pygame.init()
 
 # --- Screen Setup ---
-# Set the width and height of the screen (in pixels)
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 screen_dimensions = (SCREEN_WIDTH, SCREEN_HEIGHT)
 
-# Create the display surface
-screen = pygame.display.set_mode(screen_dimensions)
+# --- Create the OpenGL-enabled display ---
+# 1. Add the OPENGL and DOUBLEBUF flags
+flags = OPENGL | DOUBLEBUF
+screen = pygame.display.set_mode(screen_dimensions, flags)
 
 # Set the window title
-pygame.display.set_caption("3D Rendering")
+pygame.display.set_caption("3D Rendering with OpenGL")
 
-# --- Define Colors (RGB) ---
-WHITE = (255, 255, 255)
-RED = (255, 0, 0)
+# --- NEW OPENGL SETUP ---
+# 2. Enable the depth buffer (Z-buffer)
+glEnable(GL_DEPTH_TEST)
 
-renderer = Rendere.Renderer(screen, SCREEN_WIDTH, SCREEN_HEIGHT, focal = 500)
+# 3. Set up the 3D perspective
+glMatrixMode(GL_PROJECTION)
+# field of view, aspect ratio, near clip plane, far clip plane
+gluPerspective(45, (SCREEN_WIDTH / SCREEN_HEIGHT), 0.1, 100.0) 
+
+# 4. Move the "camera" back so we can see
+glMatrixMode(GL_MODELVIEW)
+# Move 5 units back (out of the screen)
+glTranslate(0.0, 0.0, -5.0) 
+# --- END NEW OPENGL SETUP ---
+
+# --- Comment out the old renderer ---
+# Your old renderer class draws to the CPU (Pygame surface)
+# It cannot draw to an OpenGL context.
+# renderer = Rendere.Renderer(screen, SCREEN_WIDTH, SCREEN_HEIGHT, focal = 500)
 
 # --- Main Game Loop ---
 running = True
 clock = pygame.time.Clock()
-x = SCREEN_WIDTH /2
-y = SCREEN_HEIGHT / 2
 
-
-shape = mesh.mesh("cube.json")
+# You can still load the mesh data, this is perfect
+shape = mesh.mesh("bulb.stl")
 
 def drawScene():
-    screen.fill(WHITE)
-    #renderer.drawCube(screen, cube1,wire=True, solid=True)
-    #renderer.drawCube(screen, pyramid)
-    renderer.drawCube(screen, shape,wire=False,solid=True)
+    # 5. Clear the screen (Color and Depth buffers)
+    # This replaces 'screen.fill(WHITE)'
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+    
+    # --- Your new OpenGL drawing code will go here ---
+    # (e.g., bind shaders, set uniforms, draw VBO)
+    
+    # --- Old code commented out ---
+    # renderer.drawCube(screen, shape,wire=True)
 
 def inputSystem(mesh):
     keys = pygame.key.get_pressed()
     
-    # Check for continuous key presses
+    # This input system is 100% perfect and does not need to change.
+    # It modifies the 'shape' object's properties in Python.
+    # Our new renderer will read these values (shape.rotation, etc.)
+    # and send them to the GPU.
+    
     if keys[pygame.K_w]:
-        print("'w' key held down")
-        # Add your 'w' key logic here
         mesh.position[2] += 0.1
-        pass
     if keys[pygame.K_a]:
-        print("'a' key held down")
-        # Add your 'a' key logic here
         mesh.position[0] -= 0.1
-        pass
     if keys[pygame.K_s]:
-        print("'s' key held down")
-        # Add your 's' key logic here
         mesh.position[2] -= 0.1
-        pass    
     if keys[pygame.K_d]:
-        print("'d' key held down")
-        # Add your 'd' key logic here
         mesh.position[0] += 0.1
-        pass
     if keys[pygame.K_SPACE]:
-        print("'SPACE' key held down")
-        # Add your 'd' key logic here
         mesh.position[1] += 0.1
-        pass
     if keys[pygame.K_LSHIFT]:
-        print("'LSHIFT' key held down")
-        # Add your 'd' key logic here
         mesh.position[1] -= 0.1
-        pass
     if keys[pygame.K_LEFT]:
-        print("'LEFT' key held down")
-        # Add your 'd' key logic here
         mesh.rotateY(-0.1)
-        pass
     if keys[pygame.K_RIGHT]:
-        print("'RIGHT' key held down")
-        # Add your 'd' key logic here
         mesh.rotateY(0.1)
-        pass
     if keys[pygame.K_UP]:
-        print("'UP' key held down")
-        # Add your 'd' key logic here
         mesh.rotateX(0.1)
-        pass
     if keys[pygame.K_DOWN]:
-        print("'DOWN' key held down")
-        # Add your 'd' key logic here
         mesh.rotateX(-0.1)
-        pass
     if keys[pygame.K_e]:
-        print("'e' key held down")
-        # Add your 'd' key logic here
         mesh.rotateZ(0.1)
-        pass
     if keys[pygame.K_x]:
-        print("'x' key held down")
-        # Add your 'd' key logic here
         mesh.rotateZ(-0.1)
-        pass
 
 
 while running:
     # --- Event Processing ---
     for event in pygame.event.get():
-        
-        # 1. Check for the QUIT event (clicking the window's 'X' button)
         if event.type == pygame.QUIT:
-            running = False  # Exit the loop
+            running = False
 
     inputSystem(shape)
     drawScene()
 
+    # 6. 'flip' now swaps the hidden OpenGL buffer with the visible one
     pygame.display.flip()
     clock.tick(60)
 
