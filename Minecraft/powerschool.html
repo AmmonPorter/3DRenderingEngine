@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weber School District - Sign In</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* A simple style for the active tab */
+        .tab-active {
+            border-bottom: 2px solid #0a58a3; /* A blue color similar to the image */
+            color: #0a58a3;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+
+    <!-- Centered Main Container -->
+    <div class="container mx-auto max-w-3xl p-4 mt-8 mb-8">
+
+        <!-- 1. Header with Logo -->
+        <header class="flex items-center mb-4">
+            <!-- New Image Logo -->
+            <img src="data:image/png;base64,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" alt="Weber School District Logo">
+        </header>
+
+        <!-- Blue Subheader -->
+        <div class="bg-[#0a58a3] text-white p-3 rounded-t-lg flex items-center space-x-2">
+            <span class="inline-block bg-white text-[#0a58a3] font-bold text-lg px-2 py-0.5 rounded-sm">P</span>
+            <span class="font-semibold">PowerSchool SIS</span>
+        </div>
+
+        <!-- Main Content Card -->
+        <main class="bg-white p-6 md:p-8 rounded-b-lg shadow-md border border-gray-200">
+
+            <!-- Parent Sign In Section -->
+            <section>
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Parent Sign In</h2>
+
+                <!-- Tabs -->
+                <div class="flex border-b border-gray-300 mb-4">
+                    <button id="signInTab" class="py-2 px-6 tab-active" onclick="showTab('signInContent')">
+                        Sign In
+                    </button>
+                    <button id="createAccountTab" class="py-2 px-6 text-gray-600" onclick="showTab('createAccountContent')">
+                        Create Account
+                    </button>
+                </div>
+
+                <!-- Sign In Content -->
+                <div id="signInContent">
+                    <form action="#" method="POST">
+                        <div class="mb-4">
+                            <label for="language" class="block text-sm font-medium text-gray-700">Select Language</label>
+                            <select id="language" name="language" class="mt-1 block w-full md:w-1/2 p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                                <option>English</option>
+                                <option>Español</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+                            <input type="text" id="username" name="username" class="mt-1 block w-full md:w-1/2 p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div class="mb-4">
+                            <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                            <input type="password" id="password" name="password" class="mt-1 block w-full md:w-1/2 p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        
+                        <div class="flex flex-col md:flex-row md:items-center justify-between">
+                            <a href="#" class="text-sm text-blue-600 hover:underline mb-4 md:mb-0">
+                                Forgot Username or Password?
+                            </a>
+                            <!-- 
+                              Replaced the <button type="submit"> with an <a> tag styled as a button.
+                              This makes the button a direct link to the URL you provided.
+                            -->
+                            <a href="https://weber.powerschool.com/public/home.html?loginTarget=/powerschool-saml-sso/Authn/PSExternal?conversation=e2s1" class="bg-[#0a58a3] text-white font-semibold py-2 px-5 rounded-md hover:bg-blue-800 transition-colors">
+                                Sign In
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Create Account Content (Hidden by default) -->
+                <div id="createAccountContent" class="hidden">
+                    <h3 class="text-lg font-semibold mb-2">Create a New Parent Account</h3>
+                    <p class="text-gray-700 mb-4">Click the button below to create your account.</p>
+                     <div class="flex justify-end">
+                        <button class="bg-[#0a58a3] text-white font-semibold py-2 px-5 rounded-md hover:bg-blue-800 transition-colors">
+                            Create Account
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Student Sign In Section -->
+            <section class="mt-8">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4">Student Sign In</h2>
+                <div class="border border-gray-300 rounded-lg p-4 flex flex-col md:flex-row items-center justify-between">
+                    <p class="text-gray-700 mb-4 md:mb-0">
+                        Students - Click the button to sign in. You will be redirected to the Student sign in page.
+                    </p>
+                    <button class="bg-[#0a58a3] text-white font-semibold py-2 px-5 rounded-md hover:bg-blue-800 transition-colors w-full md:w-auto flex-shrink-0">
+                        Student Sign In
+                    </button>
+                </div>
+            </section>
+
+            <!-- Support & Fees Section -->
+            <section class="mt-8 border-t border-gray-300 pt-6">
+                <h3 class="text-xl font-semibold text-gray-800 mb-3">Support</h3>
+                <p class="text-gray-700 mb-2">
+                    For help with the PowerSchool Parent Portal, please call 801-452-4446 or email at 
+                    <a href="mailto:myweber@wsd.net" class="text-blue-600 hover:underline">myweber@wsd.net</a>.
+                </p>
+                <p class="text-gray-700 mb-6">
+                    Students can reset their passwords at 
+                    <a href="#" class="text-blue-600 hover:underline">account.wsd.net</a>.
+                </p>
+
+                <h3 class="text-xl font-semibold text-gray-800 mb-3">Fees Information</h3>
+                <p class="text-gray-700">
+                    All fee payments must be done through the portal using a web browser. They cannot be made through the PowerSchool app.
+                </p>
+            </section>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="text-center text-xs text-gray-600 mt-6 space-y-2">
+            <p>
+                Copyright © 2005-2025 PowerSchool Group LLC and/or its affiliate(s). All rights reserved.
+                <br>
+                All trademarks are either owned or registered by PowerSchool Group LLC and/or its affiliates.
+            </p>
+            <p>
+                <a href="#" class="text-blue-600 hover:underline">Privacy Policy</a>
+            </p>
+        </footer>
+
+    </div>
+
+    <script>
+        // Simple script for tab functionality
+        const signInTab = document.getElementById('signInTab');
+        const createAccountTab = document.getElementById('createAccountTab');
+        const signInContent = document.getElementById('signInContent');
+        const createAccountContent = document.getElementById('createAccountContent');
+
+        function showTab(tabId) {
+            if (tabId === 'signInContent') {
+                // Show Sign In
+                signInContent.classList.remove('hidden');
+                signInTab.classList.add('tab-active');
+                // Hide Create Account
+                createAccountContent.classList.add('hidden');
+                createAccountTab.classList.remove('tab-active');
+            } else {
+                // Show Create Account
+                createAccountContent.classList.remove('hidden');
+                createAccountTab.classList.add('tab-active');
+                // Hide Sign In
+                signInContent.classList.add('hidden');
+                signInTab.classList.remove('tab-active');
+            }
+        }
+    </script>
+
+</body>
+</html>
+
+
